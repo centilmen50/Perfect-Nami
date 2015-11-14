@@ -65,6 +65,8 @@ namespace PerfectNami
             AutoMenu.Add("AutoRCount", new Slider("Auto R Count >= ", 3, 1, 5));
             AutoMenu.Add("useItems", new CheckBox("Use Items"));
             AutoMenu.AddLabel("Mikael, FOT Mountain, Glory, Randuin, IronSolari");
+            AutoMenu.Add("useItems", new CheckBox("Auto Q to Interrupt"));
+            AutoMenu.AddLabel("e.g Katarina R");
 
             DrawMenu = menu.AddSubMenu("Draw Settings", "DrawMenu");
             DrawMenu.Add("DrawAA", new CheckBox("Draw AA"));
@@ -75,10 +77,10 @@ namespace PerfectNami
 
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
-       //     AIHeroClient.OnProcessSpellCast += AIHeroClient_OnProcessSpellCast;
+            AIHeroClient.OnProcessSpellCast += AIHeroClient_OnProcessSpellCast;
         }
 
-        /*
+        
 
         static void AIHeroClient_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
@@ -91,7 +93,7 @@ namespace PerfectNami
                    
             }
         }
-        */
+        
 
         //----------------------------------------------Drawing_OnDraw----------------------------------------
 
