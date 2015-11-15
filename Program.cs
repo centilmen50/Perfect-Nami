@@ -65,7 +65,7 @@ namespace PerfectNami
             AutoMenu.Add("AutoRCount", new Slider("Auto R Count >= ", 3, 1, 5));
             AutoMenu.Add("useItems", new CheckBox("Use Items"));
             AutoMenu.AddLabel("Mikael, FOT Mountain, Glory, Randuin, IronSolari");
-            AutoMenu.Add("useItems", new CheckBox("Auto Q to Interrupt"));
+            AutoMenu.Add("AutoQInterrupt", new CheckBox("Auto Q to Interrupt"));
             AutoMenu.AddLabel("e.g Katarina R");
 
             DrawMenu = menu.AddSubMenu("Draw Settings", "DrawMenu");
@@ -94,7 +94,7 @@ namespace PerfectNami
             }
         }
         
-
+    
         //----------------------------------------------Drawing_OnDraw----------------------------------------
 
         static void Drawing_OnDraw(EventArgs args)
@@ -164,37 +164,27 @@ namespace PerfectNami
                 foreach (AIHeroClient allys in EntityManager.Heroes.Allies)
                 {
                     if (W.IsReady() && allys != _Player && EntityManager.Heroes.Allies.Where(ally => ally.HealthPercent <= AutoMenu["AutoWV"].Cast<Slider>().CurrentValue && W.IsInRange(ally)).Any() && _Player.ManaPercent >= AutoMenu["ManaToW"].Cast<Slider>().CurrentValue)
-                    {
-                        if (_Player.HealthPercent <= AutoMenu["AutoWV"].Cast<Slider>().CurrentValue && !AutoMenu["AutoW"].Cast<CheckBox>().CurrentValue)
-                        {
-
-                        }
-                        else
+                    {                       
                             W.Cast(allys);
                     }
                 }
             }
 
 
-            Target = TargetSelector.GetTarget(875, DamageType.Magical);
+            
 
-            if (Target != null)
-            {
-                if (Target.IsValidTarget())
-                {
-                    var ComboUseQ = ComboMenu["ComboUseQ"].Cast<CheckBox>().CurrentValue;
-                    var ComboUseW = ComboMenu["ComboUseW"].Cast<CheckBox>().CurrentValue;
-                    var ComboUseE = ComboMenu["ComboUseE"].Cast<CheckBox>().CurrentValue;
-                    var ComboUseR = ComboMenu["ComboUseR"].Cast<CheckBox>().CurrentValue;
-                    var HarassUseQ = HarassMenu["HarassUseQ"].Cast<CheckBox>().CurrentValue;
-                    var HarassUseW = HarassMenu["HarassUseW"].Cast<CheckBox>().CurrentValue;
-                    var HarassUseE = HarassMenu["HarassUseE"].Cast<CheckBox>().CurrentValue;
-                    var AutoRCount = AutoMenu["AutoRCount"].Cast<Slider>().CurrentValue;
+                    
+                    
+                   
                     //-------------------------------------------------Harass-------------------------------------------
 
                     if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
                     {
-                        if (HarassUseQ && Q.IsReady() && Target.IsValidTarget(Q.Range - 20))
+                        Target = TargetSelector.GetTarget(875, DamageType.Magical);
+                var HarassUseQ = HarassMenu["HarassUseQ"].Cast<CheckBox>().CurrentValue;
+                var HarassUseW = HarassMenu["HarassUseW"].Cast<CheckBox>().CurrentValue;
+                var HarassUseE = HarassMenu["HarassUseE"].Cast<CheckBox>().CurrentValue;
+                if (HarassUseQ && Q.IsReady() && Target.IsValidTarget(Q.Range - 20))
                         {
                             Q.Cast(Target);
                         }
@@ -221,6 +211,11 @@ namespace PerfectNami
 
                     if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                     {
+                var ComboUseQ = ComboMenu["ComboUseQ"].Cast<CheckBox>().CurrentValue;
+                var ComboUseW = ComboMenu["ComboUseW"].Cast<CheckBox>().CurrentValue;
+                var ComboUseE = ComboMenu["ComboUseE"].Cast<CheckBox>().CurrentValue;
+                var ComboUseR = ComboMenu["ComboUseR"].Cast<CheckBox>().CurrentValue;
+                Target = TargetSelector.GetTarget(875, DamageType.Magical);
                         foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies)
                         {
                             foreach (AIHeroClient ally in EntityManager.Heroes.Allies)
@@ -229,7 +224,8 @@ namespace PerfectNami
                                 {
                                     E.Cast(ally);
                                 }
-                                if (ComboUseR && enemy.IsFacing(ally) && _Player.CountEnemiesInRange(2000) > AutoRCount)
+                        var AutoRCount = AutoMenu["AutoRCount"].Cast<Slider>().CurrentValue;
+                        if (ComboUseR && enemy.IsFacing(ally) && _Player.CountEnemiesInRange(2000) > AutoRCount)
                                 {
                                     R.Cast(enemy);
                                 }
@@ -256,10 +252,8 @@ namespace PerfectNami
 
 
                 }
+            
 
-                return;
-            }
-
-        }
+        
     }
 }
