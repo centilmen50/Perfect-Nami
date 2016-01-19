@@ -23,7 +23,10 @@ namespace PerfectNami
         public static Menu menu,ComboMenu,HarassMenu,AutoMenu,DrawMenu;
         public static AIHeroClient Target = null;
         public static List<string> DodgeSpells = new List<string>() { "LuxMaliceCannon", "LuxMaliceCannonMis", "EzrealtrueShotBarrage", "KatarinaR", "YasuoDashWrapper", "ViR", "NamiR", "ThreshQ", "xerathrmissilewrapper", "yasuoq3w", "UFSlash" };
-        public static readonly Spell.Skillshot Q = new Spell.Skillshot(SpellSlot.Q, 875, EloBuddy.SDK.Enumerations.SkillShotType.Circular, 250, 1000, 130);
+        public static readonly Spell.Skillshot Q = new Spell.Skillshot(SpellSlot.Q, 875, EloBuddy.SDK.Enumerations.SkillShotType.Circular, 1, int.MaxValue, 150)
+        {
+            MinimumHitChance = EloBuddy.SDK.Enumerations.HitChance.Medium
+        };
         public static readonly Spell.Targeted W = new Spell.Targeted(SpellSlot.W, 725);
         public static readonly Spell.Targeted E = new Spell.Targeted(SpellSlot.E, 800);
         public static readonly Spell.Skillshot R = new Spell.Skillshot(SpellSlot.R, 2750, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 500, 160);
@@ -67,6 +70,8 @@ namespace PerfectNami
             AutoMenu.AddLabel("Mikael, FOT Mountain, Glory, Randuin, IronSolari");
             AutoMenu.Add("AutoQInterrupt", new CheckBox("Auto Q to Interrupt"));
             AutoMenu.AddLabel("e.g Katarina R");
+            AutoMenu.Add("gapcloser", new CheckBox("Auto Q for Gapcloser"));
+            AutoMenu.Add("interrupter", new CheckBox("Auto Q for Interrupter"));
 
             DrawMenu = menu.AddSubMenu("Draw Settings", "DrawMenu");
             DrawMenu.Add("DrawAA", new CheckBox("Draw AA"));
@@ -78,9 +83,29 @@ namespace PerfectNami
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
             AIHeroClient.OnProcessSpellCast += AIHeroClient_OnProcessSpellCast;
+            Gapcloser.OnGapcloser += Gapcloser_OnGapCloser;
+            Interrupter.OnInterruptableSpell += Interrupter_OnInterruptableSpell;
         }
 
-        
+
+        private static void Interrupter_OnInterruptableSpell(Obj_AI_Base sender,
+            Interrupter.InterruptableSpellEventArgs e)
+        {
+            if (AutoMenu["interrupter"].Cast<CheckBox>().CurrentValue && sender.IsEnemy &&
+                e.DangerLevel == EloBuddy.SDK.Enumerations.DangerLevel.High && sender.IsValidTarget(900))
+            {
+                Q.Cast(sender);
+            }
+        }
+
+        public static void Gapcloser_OnGapCloser(AIHeroClient sender, Gapcloser.GapcloserEventArgs e)
+        {
+            if (AutoMenu["gapcloser"].Cast<CheckBox>().CurrentValue && sender.IsEnemy &&
+                e.End.Distance(_Player) < 200)
+            {
+                Q.Cast(e.End);
+            }
+        }
 
         static void AIHeroClient_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
@@ -88,7 +113,7 @@ namespace PerfectNami
             {
                 if (Q.IsReady() && Q.IsInRange(sender))
                 {
-                    Q.Cast();
+                    Q.Cast(sender);
                 }
                    
             }
@@ -148,6 +173,11 @@ namespace PerfectNami
                             
                         }
 
+                        if(ally.HasBuffOfType(BuffType.Slow))
+                        {
+                            E.Cast(ally);
+                        }
+
                         if (ally.IsFacing(enemy) && ally.HealthPercent <= 30 && _Player.Distance(ally) <= 600)
                         {
                             if (useItems && IronSolari.IsReady())
@@ -184,7 +214,7 @@ namespace PerfectNami
                 var HarassUseQ = HarassMenu["HarassUseQ"].Cast<CheckBox>().CurrentValue;
                 var HarassUseW = HarassMenu["HarassUseW"].Cast<CheckBox>().CurrentValue;
                 var HarassUseE = HarassMenu["HarassUseE"].Cast<CheckBox>().CurrentValue;
-                if (HarassUseQ && Q.IsReady() && Target.IsValidTarget(Q.Range - 20))
+                if (HarassUseQ && Q.IsReady() && Target.IsValidTarget(Q.Range - 35))
                         {
                             Q.Cast(Target);
                         }

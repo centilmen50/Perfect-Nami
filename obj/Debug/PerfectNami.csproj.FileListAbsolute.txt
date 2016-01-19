@@ -23,3 +23,6 @@ C:\Users\Mertss\Desktop\My Addons\Perfect Nami\obj\Debug\PerfectNami.exe
 C:\Users\Mertss\Desktop\My Addons\Perfect Nami\obj\Debug\PerfectNami.pdb
 C:\Users\Mertss\Desktop\Perfect Nami\obj\Debug\PerfectNami.exe
 C:\Users\Mertss\Desktop\Perfect Nami\obj\Debug\PerfectNami.pdb
+C:\Users\Mertss\Desktop\buddy\My Addons\Perfect Nami\bin\Debug\PerfectNami.exe.config
+C:\Users\Mertss\Desktop\buddy\My Addons\Perfect Nami\obj\Debug\PerfectNami.exe
+C:\Users\Mertss\Desktop\buddy\My Addons\Perfect Nami\obj\Debug\PerfectNami.pdb
